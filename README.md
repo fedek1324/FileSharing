@@ -14,6 +14,6 @@ setup:
 4) npm i -g json-server
 5) npm i json-server
 
-run:
-6) json-server --watch db.json
+run:\n
+6) json-server --watch db.json\n
 7) ng serve --open
