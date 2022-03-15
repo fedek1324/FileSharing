@@ -1,0 +1,61 @@
+<a name="form-login"></a>
+<section class="jumbotron mb-0 fullScreen">
+  <form [formGroup]="form" class="form-login" (ngSubmit)="onSubmit()">
+
+    <h3 class="mb-3 font-weight-normal">Login</h3>
+    
+    <div class="alert alert-{{ message.type }}" *ngIf="message.text">
+      {{ message.text }}
+    </div>
+
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input
+      type="email"
+      class="form-control"
+      placeholder="Email address"
+      formControlName="email"
+    />
+    <span
+      class="form-help-text"
+      *ngIf="form.get('email').invalid && form.get('email').touched"
+    >
+      <span *ngIf="form.get('email')['errors']['email']"
+        >Email is incorrect</span
+      >
+      <span *ngIf="form.get('email')['errors']['required']"
+        >Email is required</span
+      >
+    </span>
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input
+      type="password"
+      class="form-control"
+      placeholder="Password"
+      formControlName="password"
+    />
+    <span
+      class="form-help-text"
+      *ngIf="form.get('password').invalid && form.get('password').touched"
+    >
+      <span *ngIf="form.get('password')['errors']['required']"
+        >Password is required</span
+      >
+      <span *ngIf="form.get('password')['errors']['minlength']"
+        >Password length must be minimum
+        {{
+          form.get("password")["errors"]["minlength"]["requiredLength"]
+        }}</span
+      >
+    </span>
+
+    <button
+      href="#upload"
+      class="btn btn-lg btn-primary btn-block mt-3"
+      type="submit"
+      [disabled]="form.invalid"
+    >
+      Sign in
+    </button>
+  </form>
+</section>

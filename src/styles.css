@@ -1,1 +1,41 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+.container {
+  max-width: 1000px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+form {
+  max-width: 300px;
+  margin: auto;
+  width: 100%;
+}
+
+form input[type="email"],
+form input[type="password"] {
+  margin-bottom: -1px;
+}
+
+form .form-control {
+  padding: 10px;
+  height: auto;
+}
+
+.fullScreen {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.fileForm * {
+  cursor: pointer;
+}
+
+.footer-text {
+  align-items: center;
+  text-align: center;
+}
