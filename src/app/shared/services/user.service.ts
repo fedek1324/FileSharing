@@ -30,6 +30,15 @@ export class UserService{
     )
   }
 
+  deleteUser(user : User): Observable<User> {
+    console.log('DELETING user');
+    console.log(user);
+    return this.http.delete(`${this.endpoint}/${user.id}`, this.httpOptions).pipe(
+      tap(() => console.log(`finished deleting user`)),
+      catchError(this.handleError<any>('deleted user'))
+    )
+  }
+  
   addUser(user:User) : Observable<User> {
     return this.http.post(this.endpoint, user, this.httpOptions).pipe(
       tap(() => console.log(`finished adding user`)),

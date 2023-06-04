@@ -31,11 +31,14 @@ export class FilesComponent implements OnInit {
     var userFilesIds = this.authService.getAuthUser().files;
     console.log("file Ids from authService:" + userFilesIds);
     if (userFilesIds) {
-      if (userFilesIds.length >0)
+      if (userFilesIds.length > 0)
         this.hasFiles = true;
       userFilesIds.forEach((fileId) => {
         this.fileService.getFile(fileId).subscribe((file) => {
-          this.files.push(file);
+          console.log("Got file", file);
+          if (file) {
+            this.files.push(file);
+          }
         });
       });
     }
@@ -45,8 +48,12 @@ export class FilesComponent implements OnInit {
   deleteFile(id: number) {
     var newUser =  this.authService.getAuthUser();
     newUser.files = newUser.files.filter( fileId => fileId !=id);
+    this.userService.deleteUser(newUser).subscribe();
+
+    newUser.id = 0;
+    this.userService.addUser(newUser).subscribe();
     this.authService.login(newUser);
-    this.userService.updateUser(newUser).subscribe();
+
     console.log('deleting file id:' + id);
     this.fileService.deleteFile(id).subscribe(() => location.reload());
   }

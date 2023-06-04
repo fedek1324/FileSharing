@@ -82,7 +82,10 @@ export class FileUploadComponent implements OnInit {
             user.files = [];
           user.files.push(data.id);
           this.authService.login(user); // update user that programm knows that it has files now if it hasnt before
-          this.userservice.updateUser(user).subscribe();
+          this.userservice.deleteUser(user).subscribe();
+          user.id = 0;
+          this.userservice.addUser(user).subscribe();
+          this.authService.login(user);
           location.reload();
         }
       );
