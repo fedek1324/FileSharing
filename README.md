@@ -8,12 +8,11 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 ## How to run
 setup:
-1) Clone repo
-2) npm init
-3) npm i -g @angular/angular-cli (if not installed)
-4) npm i -g json-server
-5) npm i json-server
-
+1) Clone repository
+2) npm i
+3) npm i @angular/cli
+4) npm i json-server
+<br>
 run:
-6) json-server --watch db.json
-7) ng serve --open
+5) in terminal 1: json-server --watch db.json
+6) in terminal 2: ng serve --open
