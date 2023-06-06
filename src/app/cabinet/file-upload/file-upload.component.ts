@@ -29,7 +29,7 @@ export class FileUploadComponent implements OnInit {
   }
 
   fileToUpload: File = null;
-  message : Message = {type: 'success', text: ''};
+  message: Message = { type: 'success', text: '' };
 
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
@@ -56,8 +56,8 @@ export class FileUploadComponent implements OnInit {
     var date = this.getCurrentDate();
     var time = new Date().getHours() + ':' + new Date().getMinutes();
     console.log(this.fileToUpload);
-    if (this.fileToUpload.size > 8 * 1024*1024) {
-      this.message = {type: 'danger', text: 'File too large, sorry('};
+    if (this.fileToUpload.size > 8 * 1024 * 1024) {
+      this.message = { type: 'danger', text: 'File too large, sorry(' };
       return;
     }
     this.getBase64(this.fileToUpload).then((fileStr) => {
@@ -69,26 +69,25 @@ export class FileUploadComponent implements OnInit {
         uploadTime: time,
         content: fileStr,
       };
-      this.fileUploadService.postFile(myFile).subscribe(
-        (data) => {
-          if (!data) {
-            console.log("no data");
-            this.message = {type: 'danger', text: 'File too large, sorry('};
-            return;
-          }
-          // add id of currently uploaded file to user inforamtion
-          var user = this.authService.getAuthUser();
-          if (user.files == undefined) 
-            user.files = [];
-          user.files.push(data.id);
-          this.authService.login(user); // update user that programm knows that it has files now if it hasnt before
-          this.userservice.deleteUser(user).subscribe();
-          user.id = 0;
-          this.userservice.addUser(user).subscribe();
-          this.authService.login(user);
-          location.reload();
+      this.fileUploadService.postFile(myFile).subscribe((data) => {
+        if (!data) {
+          console.log('no data');
+          this.message = { type: 'danger', text: 'File too large, sorry(' };
+          return;
         }
-      );
+        // add id of currently uploaded file to user inforamtion
+        var user = this.authService.getAuthUser();
+        if (user.files == undefined) user.files = [];
+        user.files.push(data.id);
+        this.userservice.deleteUser(user).subscribe((res) => {
+          this.userservice.updateUser(user).subscribe((res) => {
+            console.log(res);
+            // as response we get user with correct id (not 0) and we have to login true user
+            this.authService.login(res);
+            location.reload();
+          });
+        });
+      });
     });
     return;
   }

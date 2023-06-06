@@ -31,14 +31,11 @@ export class FilesComponent implements OnInit {
     var userFilesIds = this.authService.getAuthUser().files;
     console.log("file Ids from authService:" + userFilesIds);
     if (userFilesIds) {
-      if (userFilesIds.length > 0)
+      if (userFilesIds.length >0)
         this.hasFiles = true;
       userFilesIds.forEach((fileId) => {
         this.fileService.getFile(fileId).subscribe((file) => {
-          console.log("Got file", file);
-          if (file) {
-            this.files.push(file);
-          }
+          this.files.push(file);
         });
       });
     }
@@ -46,21 +43,18 @@ export class FilesComponent implements OnInit {
   }
 
   deleteFile(id: number) {
-    var oldUser =  this.authService.getAuthUser();
-    this.userService.deleteUser(oldUser).subscribe();
-    console.log('deleting file id:' + id);
-    this.fileService.deleteFile(id).subscribe(() => location.reload());
-
-    var newUser = oldUser;
+    var newUser =  this.authService.getAuthUser();
     newUser.files = newUser.files.filter( fileId => fileId !=id);
-    newUser.id = 0;
 
-    this.userService.addUser(newUser).subscribe((res) => {
-      console.log(res);
-      // as response we get user with correct id (not 0) and we have to login true user
-      this.authService.login(res);
-      location.reload();
-    });
+    this.userService.deleteUser(newUser).subscribe((res) => {
+      this.userService.updateUser(newUser).subscribe((res) => {
+        console.log(res);
+        // as response we get user with correct id (not 0) and we have to login true user
+        this.authService.login(res);
+        console.log('deleting file id:' + id);
+        this.fileService.deleteFile(id).subscribe(() => location.reload());
+      });
+    })
 
   }
 

@@ -24,21 +24,20 @@ export class UserService{
     console.log('updatin user');
     console.log('new user:');
     console.log(user);
-    return this.http.put(`${this.endpoint}/${user.id}`, user, this.httpOptions).pipe(
+    return this.http.post(`${this.endpoint}`, user, this.httpOptions).pipe( // put doesnt work right
       tap(() => console.log(`finished updating user`)),
       catchError(this.handleError<any>('updated user'))
     )
   }
 
-  deleteUser(user : User): Observable<User> {
-    console.log('DELETING user');
-    console.log(user);
+  deleteUser(user : User) : Observable<User> {
+    console.log('deleting user');
     return this.http.delete(`${this.endpoint}/${user.id}`, this.httpOptions).pipe(
       tap(() => console.log(`finished deleting user`)),
       catchError(this.handleError<any>('deleted user'))
     )
   }
-  
+
   addUser(user:User) : Observable<User> {
     return this.http.post(this.endpoint, user, this.httpOptions).pipe(
       tap(() => console.log(`finished adding user`)),
