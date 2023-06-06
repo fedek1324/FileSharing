@@ -87,6 +87,7 @@ export class FileUploadComponent implements OnInit {
             // location.reload();
             this.userservice.files.push(myFile)
             this.userservice.outFiles$ = of(this.userservice.files);
+            this.userservice.onFilesChangeTrigger();
           });
         });
       });

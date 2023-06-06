@@ -13,6 +13,17 @@ export class UserService{
   public outFiles$: Observable<MyFile[]>;
   public files: MyFile[] = [];
   public hasFiles = false;
+  private handlers = [];
+
+  public addOnFilesChangeHangler(func) {
+    this.handlers.push(func)
+  }
+
+  public onFilesChangeTrigger() {
+    this.handlers.forEach(handler => {
+      handler.apply(this, arguments);
+    });
+  }
 
   endpoint = 'http://localhost:3000/users';
 

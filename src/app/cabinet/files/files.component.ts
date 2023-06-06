@@ -38,6 +38,8 @@ export class FilesComponent implements OnInit {
       });
     }
     this.userService.outFiles$ = of(this.userService.files);
+
+    this.userService.addOnFilesChangeHangler(() => console.log("files changed"))
   }
 
   deleteFile(id: number) {
