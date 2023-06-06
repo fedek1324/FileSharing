@@ -3,11 +3,16 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {User} from '../models/user';
 import {catchError, map, tap} from 'rxjs/operators';
+import { MyFile } from '../models/file';
 
 @Injectable()
 export class UserService{
   constructor(private http: HttpClient) {
   }
+
+  public outFiles$: Observable<MyFile[]>;
+  public files: MyFile[] = [];
+  public hasFiles = false;
 
   endpoint = 'http://localhost:3000/users';
 

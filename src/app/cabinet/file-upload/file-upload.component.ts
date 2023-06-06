@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FileService } from '../../shared/services/file.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyFile } from '../../shared/models/file';
 import { AuthService } from '../../shared/services/authService';
 import { UserService } from '../../shared/services/user.service';
 import { Message } from 'src/app/shared/models/message';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-file-upload',
@@ -16,7 +16,7 @@ export class FileUploadComponent implements OnInit {
   constructor(
     private fileUploadService: FileService,
     private authService: AuthService,
-    private userservice: UserService
+    public userservice: UserService
   ) {}
 
   form: FormGroup;
@@ -84,7 +84,9 @@ export class FileUploadComponent implements OnInit {
             console.log(res);
             // as response we get user with correct id (not 0) and we have to login true user
             this.authService.login(res);
-            location.reload();
+            // location.reload();
+            this.userservice.files.push(myFile)
+            this.userservice.outFiles$ = of(this.userservice.files);
           });
         });
       });

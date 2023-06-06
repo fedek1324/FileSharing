@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/services/authService';
 import { FileService } from 'src/app/shared/services/file.service';
 import { UserService } from 'src/app/shared/services/user.service';
@@ -15,36 +14,35 @@ export class FilesComponent implements OnInit {
   constructor(
     private fileService: FileService,
     private authService: AuthService,
-    private userService: UserService
+    public userService: UserService
   ) {}
 
   search(term: string): void {
-    var filteredFiles = this.files.filter( file => file.name.includes(term));
-    this.outFiles$ = of(filteredFiles);
+    var filteredFiles = this.userService.files.filter((file) =>
+      file.name.includes(term)
+    );
+    this.userService.outFiles$ = of(filteredFiles);
+    console.log(this.userService.files)
   }
 
-  outFiles$: Observable<MyFile[]>;
-  files: MyFile[] = [];
-  hasFiles = false;
-
   ngOnInit(): void {
+    this.userService.files = []; // otherwise doubles file instances
     var userFilesIds = this.authService.getAuthUser().files;
-    console.log("file Ids from authService:" + userFilesIds);
+    console.log('file Ids from authService:' + userFilesIds);
     if (userFilesIds) {
-      if (userFilesIds.length >0)
-        this.hasFiles = true;
+      if (userFilesIds.length > 0) this.userService.hasFiles = true;
       userFilesIds.forEach((fileId) => {
         this.fileService.getFile(fileId).subscribe((file) => {
-          this.files.push(file);
+          this.userService.files.push(file);
         });
       });
     }
-    this.outFiles$ = of(this.files);
+    this.userService.outFiles$ = of(this.userService.files);
   }
 
   deleteFile(id: number) {
-    var newUser =  this.authService.getAuthUser();
-    newUser.files = newUser.files.filter( fileId => fileId !=id);
+    var newUser = this.authService.getAuthUser();
+    newUser.files = newUser.files.filter((fileId) => fileId != id);
 
     this.userService.deleteUser(newUser).subscribe((res) => {
       this.userService.updateUser(newUser).subscribe((res) => {
@@ -52,10 +50,14 @@ export class FilesComponent implements OnInit {
         // as response we get user with correct id (not 0) and we have to login true user
         this.authService.login(res);
         console.log('deleting file id:' + id);
-        this.fileService.deleteFile(id).subscribe(() => location.reload());
+        this.fileService.deleteFile(id).subscribe(() => {
+          this.userService.files = this.userService.files.filter(
+            (file) => file.id != id
+          );
+          this.userService.outFiles$ = of(this.userService.files);
+        });
       });
-    })
-
+    });
   }
 
   nameAsc = false;
@@ -65,7 +67,7 @@ export class FilesComponent implements OnInit {
   sizeAsc = false;
   sizeDesc = false;
 
-  download(file : MyFile) : void {
+  download(file: MyFile): void {
     console.log(file);
     this.fileService.downloadFile(file);
   }
@@ -80,11 +82,15 @@ export class FilesComponent implements OnInit {
     console.log('this.nameAsc = ' + this.nameAsc);
     console.log('this.nameDesc = ' + this.nameDesc);
     if (this.nameDesc)
-      this.files.sort( (fileA, fileB) => fileA.name.localeCompare(fileB.name))
-    else 
-      this.files.sort( (fileA, fileB) => fileB.name.localeCompare(fileA.name))
-    console.log(this.files);
-    this.outFiles$ = of(this.files);
+      this.userService.files.sort((fileA, fileB) =>
+        fileA.name.localeCompare(fileB.name)
+      );
+    else
+      this.userService.files.sort((fileA, fileB) =>
+        fileB.name.localeCompare(fileA.name)
+      );
+    console.log(this.userService.files);
+    this.userService.outFiles$ = of(this.userService.files);
   }
 
   timeOnClick() {
@@ -94,16 +100,14 @@ export class FilesComponent implements OnInit {
     this.sizeDesc = false;
     this.timeAsc = !this.timeAsc;
     this.timeDesc = !this.timeAsc;
-    this.files.sort( (fileA, fileB) => {
-      var compareStrA : string = fileA.uploadDate + " "+ fileA.uploadTime;
-      var compareStrB : string = fileB.uploadDate  + " " + fileB.uploadTime;
-      if (this.timeAsc)
-        return compareStrA.localeCompare(compareStrB);
-      else
-        return compareStrB.localeCompare(compareStrA);
-      });
-    console.log(this.files);
-    this.outFiles$ = of(this.files);
+    this.userService.files.sort((fileA, fileB) => {
+      var compareStrA: string = fileA.uploadDate + ' ' + fileA.uploadTime;
+      var compareStrB: string = fileB.uploadDate + ' ' + fileB.uploadTime;
+      if (this.timeAsc) return compareStrA.localeCompare(compareStrB);
+      else return compareStrB.localeCompare(compareStrA);
+    });
+    console.log(this.userService.files);
+    this.userService.outFiles$ = of(this.userService.files);
   }
 
   sizeOnClick() {
@@ -114,19 +118,22 @@ export class FilesComponent implements OnInit {
     this.sizeAsc = !this.sizeAsc;
     this.sizeDesc = !this.sizeAsc;
     if (this.sizeAsc)
-      this.files.sort( (fileA, fileB) => fileA.content.length  - fileB.content.length)
-    else 
-      this.files.sort( (fileA, fileB) => fileB.content.length  - fileA.content.length)
-    this.outFiles$ = of(this.files);
+      this.userService.files.sort(
+        (fileA, fileB) => fileA.content.length - fileB.content.length
+      );
+    else
+      this.userService.files.sort(
+        (fileA, fileB) => fileB.content.length - fileA.content.length
+      );
+    this.userService.outFiles$ = of(this.userService.files);
   }
 
-  getSizeFromBase64StringLength(stringLen : number) : string {
-    var size : number = parseInt( (stringLen / 1372).toFixed(1)); // KB
+  getSizeFromBase64StringLength(stringLen: number): string {
+    var size: number = parseInt((stringLen / 1372).toFixed(1)); // KB
     if (size > 1024) {
-      return (size / 1024).toFixed(1) + " MB";
-    }
-    else {
-      return size + " KB";
+      return (size / 1024).toFixed(1) + ' MB';
+    } else {
+      return size + ' KB';
     }
   }
 }

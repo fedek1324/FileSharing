@@ -1,7 +1,7 @@
 <section class="jumbotron mb-0" style="background-color: lightsalmon">
   <div class="container">
     <div
-      *ngIf="hasFiles"
+      *ngIf="this.userService.hasFiles"
       class="active-cyan-4 col-lg-4 pl-0 mb-2"
       style="padding-right: 1.3rem"
     >
@@ -17,7 +17,7 @@
       />
     </div>
 
-    <div *ngIf="hasFiles" class="col-lg-4 pl-0 mb-2">
+    <div *ngIf="this.userService.hasFiles" class="col-lg-4 pl-0 mb-2">
       <div class="btn-group" data-toggle="buttons">
         <button
           type="button"
@@ -48,12 +48,12 @@
       </div>
     </div>
 
-    <div *ngIf="!hasFiles" class="pl-0 mb-2">
+    <div *ngIf="!this.userService.hasFiles" class="pl-0 mb-2">
       <h5>No uploaded files</h5>
     </div>
 
     <div class="row">
-      <div class="col-lg-4 mt-4" *ngFor="let file of outFiles$ | async">
+      <div class="col-lg-4 mt-4" *ngFor="let file of this.userService.outFiles$ | async">
         <div class="card my-card">
           <div class="card-body">
             <!-- [ngClass]="{ 'float-left': !file.description }" -->
