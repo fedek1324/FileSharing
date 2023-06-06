@@ -46,16 +46,22 @@ export class FilesComponent implements OnInit {
   }
 
   deleteFile(id: number) {
-    var newUser =  this.authService.getAuthUser();
-    newUser.files = newUser.files.filter( fileId => fileId !=id);
-    this.userService.deleteUser(newUser).subscribe();
-
-    newUser.id = 0;
-    this.userService.addUser(newUser).subscribe();
-    this.authService.login(newUser);
-
+    var oldUser =  this.authService.getAuthUser();
+    this.userService.deleteUser(oldUser).subscribe();
     console.log('deleting file id:' + id);
     this.fileService.deleteFile(id).subscribe(() => location.reload());
+
+    var newUser = oldUser;
+    newUser.files = newUser.files.filter( fileId => fileId !=id);
+    newUser.id = 0;
+
+    this.userService.addUser(newUser).subscribe((res) => {
+      console.log(res);
+      // as response we get user with correct id (not 0) and we have to login true user
+      this.authService.login(res);
+      location.reload();
+    });
+
   }
 
   nameAsc = false;
