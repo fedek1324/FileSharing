@@ -24,8 +24,15 @@
           class="btn btn-primary btn-sm"
           (click)="nameOnClick()"
         >
-          Name <i [ngClass]="{'fa':nameDesc, 'fa-chevron-down': nameDesc }"></i>
+          Name <i  [ngClass]="{'fa':nameDesc, 'fa-chevron-down': nameDesc }"></i>
           <i  [ngClass]="{'fa':nameAsc, 'fa-chevron-up': nameAsc }"></i>
+                  <!-- <i *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'asc'" class="fas fa-chevron-down"></i>
+        <i *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'desc'" class="fas fa-chevron-up"></i> -->
+        <!-- <i *ngIf="nameAsc" class="fas fa-chevron-down"></i>
+        <i *ngIf="nameAsc" class="fas fa-chevron-up"></i> -->
+        <!-- <div *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == ''; then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock><i class="fas fa-chevron-up"></i></ng-template>
+        <ng-template #elseBlock><i class="fas fa-chevron-down"></i></ng-template> -->
         </button>
         <button
           type="button"

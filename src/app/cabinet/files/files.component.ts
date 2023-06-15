@@ -29,8 +29,12 @@ export class FilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.sortFiles(SortBy.Name, SortOrder.Ascending); // inits current sort
+    this.nameAsc = true;
+    this.nameDesc = false;
+    this.timeAsc = false;
+    this.timeDesc = false;
+    this.sizeAsc = false;
+    this.sizeDesc = false;
     this.initFilesList();
 
     this.userService.addOnFilesChangeHangler(() => this.initFilesList());
@@ -49,15 +53,17 @@ export class FilesComponent implements OnInit {
           if (file) {
             this.userService.files.push(file);
             this.hasLoadedFiles$ = true;
+
+            // to do fix sort on each file
+            let currSort = this.getCurrentSort();
+            console.log(currSort);
+            this.sortFiles(currSort.sortBy, currSort.sortOrder)
           }
         });
       });
     }
     this.userService.outFiles$ = of(this.userService.files);
 
-    let currSort = this.getCurrentSort();
-    console.log(currSort);
-    this.sortFiles(currSort.sortBy, currSort.sortOrder)
   }
 
   deleteFile(id: number) {
@@ -86,14 +92,14 @@ export class FilesComponent implements OnInit {
     this.fileService.downloadFile(file);
   }
 
-  nameAsc = false;
-  nameDesc = false;
-  timeAsc = false;
-  timeDesc = false;
-  sizeAsc = false;
-  sizeDesc = false;
+  nameAsc : boolean;
+  nameDesc : boolean;
+  timeAsc : boolean;
+  timeDesc : boolean;
+  sizeAsc : boolean;
+  sizeDesc : boolean;
 
-  getCurrentSort(): { sortBy: SortBy | null; sortOrder: SortOrder } {
+  getCurrentSort(): { sortBy: SortBy; sortOrder: SortOrder } {
     let sortBy: SortBy | null = null;
     let sortOrder: SortOrder | null = null;
 
@@ -157,6 +163,13 @@ export class FilesComponent implements OnInit {
     }
   
     console.log(this.userService.files);
+    console.log("called SORT, now sort is", this.getCurrentSort());
+    console.log("variables ", this.nameAsc ,
+    this.nameDesc ,
+    this.timeAsc ,
+    this.timeDesc ,
+    this.sizeAsc ,
+    this.sizeDesc)
     this.userService.outFiles$ = of(this.userService.files);
   }
   
