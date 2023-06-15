@@ -29,7 +29,7 @@ export class FilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.nameAsc = true;
+    this.nameAsc = false;
     this.nameDesc = false;
     this.timeAsc = false;
     this.timeDesc = false;
@@ -58,11 +58,11 @@ export class FilesComponent implements OnInit {
             let currSort = this.getCurrentSort();
             console.log(currSort);
             this.sortFiles(currSort.sortBy, currSort.sortOrder)
+            this.userService.outFiles$ = of(this.userService.files);
           }
         });
       });
     }
-    this.userService.outFiles$ = of(this.userService.files);
 
   }
 
@@ -170,7 +170,7 @@ export class FilesComponent implements OnInit {
     this.timeDesc ,
     this.sizeAsc ,
     this.sizeDesc)
-    this.userService.outFiles$ = of(this.userService.files);
+    //this.userService.outFiles$ = of(this.userService.files);
   }
   
   nameOnClick() {

@@ -97,7 +97,7 @@ export class FileUploadComponent implements OnInit {
             this.authService.login(res);
             // location.reload();
             this.userservice.files.push(myFile)
-            this.userservice.outFiles$ = of(this.userservice.files);
+            // this.userservice.outFiles$ = of(this.userservice.files);
             this.userservice.onFilesChange();
           });
         });
