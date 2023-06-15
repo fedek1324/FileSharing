@@ -170,7 +170,7 @@ export class FilesComponent implements OnInit {
     this.timeDesc ,
     this.sizeAsc ,
     this.sizeDesc)
-    //this.userService.outFiles$ = of(this.userService.files);
+    this.userService.outFiles$ = of(this.userService.files); // if i remove it i get doubled files
   }
   
   nameOnClick() {
