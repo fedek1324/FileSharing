@@ -52,6 +52,10 @@
       <h5>No uploaded files</h5>
     </div>
 
+    <div *ngIf="!this.hasLoadedFiles$ && this.userService.hasFiles" class="pl-0 mb-2">
+      <h5>Cant load files, server returned nothing</h5>
+    </div>
+
     <div class="row">
       <div class="col-lg-4 mt-4" *ngFor="let file of this.userService.outFiles$ | async">
         <div class="card my-card">

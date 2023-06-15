@@ -1,0 +1,1 @@
+fix err when we delete file and it tries to delete file with id 0

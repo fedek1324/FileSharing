@@ -17,6 +17,8 @@ export class FilesComponent implements OnInit {
     public userService: UserService
   ) {}
 
+  public hasLoadedFiles$ = false;
+
   search(term: string): void {
     var filteredFiles = this.userService.files.filter((file) =>
       file.name.includes(term)
@@ -33,7 +35,10 @@ export class FilesComponent implements OnInit {
       if (userFilesIds.length > 0) this.userService.hasFiles = true;
       userFilesIds.forEach((fileId) => {
         this.fileService.getFile(fileId).subscribe((file) => {
-          this.userService.files.push(file);
+          if (file) {
+            this.userService.files.push(file);
+            this.hasLoadedFiles$ = true;
+          }
         });
       });
     }
