@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/shared/services/authService';
 import { FileService } from 'src/app/shared/services/file.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { MyFile } from '../../shared/models/file';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-files',
@@ -44,7 +45,14 @@ export class FilesComponent implements OnInit {
     }
     this.userService.outFiles$ = of(this.userService.files);
 
-    this.userService.addOnFilesChangeHangler(() => console.log("files changed"))
+    this.sortFiles(SortBy.Name, SortOrder.Ascending);
+
+    this.userService.addOnFileUploadHangler(() => console.log("file uploaded, sorting"));
+    this.userService.addOnFileUploadHangler(() => {
+      let currSort = this.getCurrentSort();
+      console.log(currSort);
+      this.sortFiles(currSort.sortBy, currSort.sortOrder)
+    });
   }
 
   deleteFile(id: number) {
@@ -67,6 +75,11 @@ export class FilesComponent implements OnInit {
     });
   }
 
+  download(file: MyFile): void {
+    console.log(file);
+    this.fileService.downloadFile(file);
+  }
+
   nameAsc = false;
   nameDesc = false;
   timeAsc = false;
@@ -74,66 +87,88 @@ export class FilesComponent implements OnInit {
   sizeAsc = false;
   sizeDesc = false;
 
-  download(file: MyFile): void {
-    console.log(file);
-    this.fileService.downloadFile(file);
+  getCurrentSort(): { sortBy: SortBy | null; sortOrder: SortOrder } {
+    let sortBy: SortBy | null = null;
+    let sortOrder: SortOrder | null = null;
+
+    if (this.nameAsc || this.nameDesc) {
+      sortBy = SortBy.Name;
+      sortOrder = this.nameAsc ? SortOrder.Ascending : SortOrder.Descending;
+    } else if (this.timeAsc || this.timeDesc) {
+      sortBy = SortBy.Time;
+      sortOrder = this.timeAsc ? SortOrder.Ascending : SortOrder.Descending;
+    } else if (this.sizeAsc || this.sizeDesc) {
+      sortBy = SortBy.Size;
+      sortOrder = this.sizeAsc ? SortOrder.Ascending : SortOrder.Descending;
+    }
+
+    return { sortBy, sortOrder };
   }
 
+
+  sortFiles(sortBy: SortBy, sortOrder: SortOrder): void {
+    this.nameAsc = false;
+    this.nameDesc = false;
+    this.timeAsc = false;
+    this.timeDesc = false;
+    this.sizeAsc = false;
+    this.sizeDesc = false;
+  
+    switch (sortBy) {
+      case SortBy.Name:
+        this.nameAsc = sortOrder === SortOrder.Ascending;
+        this.nameDesc = sortOrder === SortOrder.Descending;
+        this.userService.files.sort((fileA, fileB) =>
+          sortOrder === SortOrder.Ascending
+            ? fileA.name.localeCompare(fileB.name)
+            : fileB.name.localeCompare(fileA.name)
+        );
+        break;
+  
+      case SortBy.Time:
+        this.timeAsc = sortOrder === SortOrder.Ascending;
+        this.timeDesc = sortOrder === SortOrder.Descending;
+        this.userService.files.sort((fileA, fileB) => {
+          const compareStrA: string = fileA.uploadDate + ' ' + fileA.uploadTime;
+          const compareStrB: string = fileB.uploadDate + ' ' + fileB.uploadTime;
+          if (sortOrder === SortOrder.Ascending) {
+            return compareStrA.localeCompare(compareStrB);
+          } else {
+            return compareStrB.localeCompare(compareStrA);
+          }
+        });
+        break;
+  
+      case SortBy.Size:
+        this.sizeAsc = sortOrder === SortOrder.Ascending;
+        this.sizeDesc = sortOrder === SortOrder.Descending;
+        this.userService.files.sort((fileA, fileB) =>
+          sortOrder === SortOrder.Ascending
+            ? fileA.content.length - fileB.content.length
+            : fileB.content.length - fileA.content.length
+        );
+        break;
+    }
+  
+    console.log(this.userService.files);
+    this.userService.outFiles$ = of(this.userService.files);
+  }
+  
   nameOnClick() {
-    this.timeAsc = false;
-    this.timeDesc = false;
-    this.sizeAsc = false;
-    this.sizeDesc = false;
-    this.nameAsc = !this.nameAsc;
-    this.nameDesc = !this.nameAsc;
-    console.log('this.nameAsc = ' + this.nameAsc);
-    console.log('this.nameDesc = ' + this.nameDesc);
-    if (this.nameDesc)
-      this.userService.files.sort((fileA, fileB) =>
-        fileA.name.localeCompare(fileB.name)
-      );
-    else
-      this.userService.files.sort((fileA, fileB) =>
-        fileB.name.localeCompare(fileA.name)
-      );
-    console.log(this.userService.files);
-    this.userService.outFiles$ = of(this.userService.files);
+    const sortOrder = this.nameAsc ? SortOrder.Descending : SortOrder.Ascending;
+    this.sortFiles(SortBy.Name, sortOrder);
   }
-
+  
   timeOnClick() {
-    this.nameAsc = false;
-    this.nameDesc = false;
-    this.sizeAsc = false;
-    this.sizeDesc = false;
-    this.timeAsc = !this.timeAsc;
-    this.timeDesc = !this.timeAsc;
-    this.userService.files.sort((fileA, fileB) => {
-      var compareStrA: string = fileA.uploadDate + ' ' + fileA.uploadTime;
-      var compareStrB: string = fileB.uploadDate + ' ' + fileB.uploadTime;
-      if (this.timeAsc) return compareStrA.localeCompare(compareStrB);
-      else return compareStrB.localeCompare(compareStrA);
-    });
-    console.log(this.userService.files);
-    this.userService.outFiles$ = of(this.userService.files);
+    const sortOrder = this.timeAsc ? SortOrder.Descending : SortOrder.Ascending;
+    this.sortFiles(SortBy.Time, sortOrder);
   }
-
+  
   sizeOnClick() {
-    this.nameAsc = false;
-    this.nameDesc = false;
-    this.timeAsc = false;
-    this.timeDesc = false;
-    this.sizeAsc = !this.sizeAsc;
-    this.sizeDesc = !this.sizeAsc;
-    if (this.sizeAsc)
-      this.userService.files.sort(
-        (fileA, fileB) => fileA.content.length - fileB.content.length
-      );
-    else
-      this.userService.files.sort(
-        (fileA, fileB) => fileB.content.length - fileA.content.length
-      );
-    this.userService.outFiles$ = of(this.userService.files);
+    const sortOrder = this.sizeAsc ? SortOrder.Descending : SortOrder.Ascending;
+    this.sortFiles(SortBy.Size, sortOrder);
   }
+  
 
   getSizeFromBase64StringLength(stringLen: number): string {
     var size: number = parseInt((stringLen / 1372).toFixed(1)); // KB
@@ -143,4 +178,15 @@ export class FilesComponent implements OnInit {
       return size + ' KB';
     }
   }
+}
+
+enum SortBy {
+  Name = 'name',
+  Time = 'time',
+  Size = 'size',
+}
+
+enum SortOrder {
+  Ascending = 'asc',
+  Descending = 'desc',
 }

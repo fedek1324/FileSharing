@@ -53,10 +53,11 @@ export class FileUploadComponent implements OnInit {
   }
 
   uploadFileToActivity() {
-    var date = this.getCurrentDate();
-    var time = new Date().getHours() + ':' + new Date().getMinutes();
+    var currentDate = new Date();
+    var date = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth()+1)).slice(-2) + '.' + currentDate.getFullYear();
+    var time = ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
     console.log(this.fileToUpload);
-    if (this.fileToUpload.size > 8 * 1024 * 1024) {
+    if (this.fileToUpload.size > 8 * 1024 * 1024) { // 8 MB
       this.message = { type: 'danger', text: 'File too large, sorry(' };
       return;
     }
@@ -87,7 +88,7 @@ export class FileUploadComponent implements OnInit {
             // location.reload();
             this.userservice.files.push(myFile)
             this.userservice.outFiles$ = of(this.userservice.files);
-            this.userservice.onFilesChangeTrigger();
+            this.userservice.onFileUpload();
           });
         });
       });
