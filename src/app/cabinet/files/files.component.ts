@@ -30,8 +30,8 @@ export class FilesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.initFilesList();
     this.sortFiles(SortBy.Name, SortOrder.Ascending); // inits current sort
+    this.initFilesList();
 
     this.userService.addOnFilesChangeHangler(() => this.initFilesList());
   }
