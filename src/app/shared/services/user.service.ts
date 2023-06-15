@@ -13,14 +13,14 @@ export class UserService{
   public outFiles$: Observable<MyFile[]>;
   public files: MyFile[] = [];
   public hasFiles = false;
-  private fileUploadHandlers = [];
+  private filesChangeHandlers = [];
 
-  public addOnFileUploadHangler(func) {
-    this.fileUploadHandlers.push(func)
+  public addOnFilesChangeHangler(func) {
+    this.filesChangeHandlers.push(func)
   }
 
-  public onFileUpload() {
-    this.fileUploadHandlers.forEach(handler => {
+  public onFilesChange() {
+    this.filesChangeHandlers.forEach(handler => {
       handler.apply(this, arguments);
     });
   }

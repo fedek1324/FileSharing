@@ -6,11 +6,21 @@ import { AuthService } from '../../shared/services/authService';
 import { UserService } from '../../shared/services/user.service';
 import { Message } from 'src/app/shared/models/message';
 import { of } from 'rxjs';
+import { trigger, state, style, animate, transition } from '@angular/animations';
+
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
+  animations: [
+    trigger('fadeOutAnimation', [
+      state('visible', style({ opacity: 1 })),
+      transition(':leave', [
+        animate('1.5s', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class FileUploadComponent implements OnInit {
   constructor(
@@ -58,7 +68,7 @@ export class FileUploadComponent implements OnInit {
     var time = ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
     console.log(this.fileToUpload);
     if (this.fileToUpload.size > 8 * 1024 * 1024) { // 8 MB
-      this.message = { type: 'danger', text: 'File too large, sorry(' };
+      this.showMessage('danger', 'File too large, sorry(');
       return;
     }
     this.getBase64(this.fileToUpload).then((fileStr) => {
@@ -73,7 +83,7 @@ export class FileUploadComponent implements OnInit {
       this.fileUploadService.postFile(myFile).subscribe((data) => {
         if (!data) {
           console.log('no data');
-          this.message = { type: 'danger', text: 'File too large, sorry(' };
+          this.showMessage('danger', 'Cannot upload file, server did not respond');
           return;
         }
         // add id of currently uploaded file to user inforamtion
@@ -88,11 +98,16 @@ export class FileUploadComponent implements OnInit {
             // location.reload();
             this.userservice.files.push(myFile)
             this.userservice.outFiles$ = of(this.userservice.files);
-            this.userservice.onFileUpload();
+            this.userservice.onFilesChange();
           });
         });
       });
     });
     return;
+  }
+
+  showMessage(type, text) {
+    this.message = { type: type, text: text };
+    setTimeout( () => this.message = null, 5000);
   }
 }

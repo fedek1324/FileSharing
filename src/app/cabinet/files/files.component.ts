@@ -29,6 +29,16 @@ export class FilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.initFilesList();
+    this.sortFiles(SortBy.Name, SortOrder.Ascending); // inits current sort
+
+    this.userService.addOnFilesChangeHangler(() => this.initFilesList());
+  }
+
+  initFilesList() {
+    this.hasLoadedFiles$ = false;
+    this.userService.hasFiles = false;
     this.userService.files = []; // otherwise doubles file instances
     var userFilesIds = this.authService.getAuthUser().files;
     console.log('file Ids from authService:' + userFilesIds);
@@ -45,14 +55,9 @@ export class FilesComponent implements OnInit {
     }
     this.userService.outFiles$ = of(this.userService.files);
 
-    this.sortFiles(SortBy.Name, SortOrder.Ascending);
-
-    this.userService.addOnFileUploadHangler(() => console.log("file uploaded, sorting"));
-    this.userService.addOnFileUploadHangler(() => {
-      let currSort = this.getCurrentSort();
-      console.log(currSort);
-      this.sortFiles(currSort.sortBy, currSort.sortOrder)
-    });
+    let currSort = this.getCurrentSort();
+    console.log(currSort);
+    this.sortFiles(currSort.sortBy, currSort.sortOrder)
   }
 
   deleteFile(id: number) {
@@ -70,6 +75,7 @@ export class FilesComponent implements OnInit {
             (file) => file.id != id
           );
           this.userService.outFiles$ = of(this.userService.files);
+          this.userService.onFilesChange();
         });
       });
     });
