@@ -29,7 +29,7 @@ export class FilesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.nameAsc = false;
+    this.nameAsc = true;
     this.nameDesc = false;
     this.timeAsc = false;
     this.timeDesc = false;

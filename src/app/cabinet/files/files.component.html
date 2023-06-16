@@ -24,15 +24,16 @@
           class="btn btn-primary btn-sm"
           (click)="nameOnClick()"
         >
-          Name <i  [ngClass]="{'fa':nameDesc, 'fa-chevron-down': nameDesc }"></i>
-          <i  [ngClass]="{'fa':nameAsc, 'fa-chevron-up': nameAsc }"></i>
-                  <!-- <i *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'asc'" class="fas fa-chevron-down"></i>
-        <i *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'desc'" class="fas fa-chevron-up"></i> -->
-        <!-- <i *ngIf="nameAsc" class="fas fa-chevron-down"></i>
-        <i *ngIf="nameAsc" class="fas fa-chevron-up"></i> -->
-        <!-- <div *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == ''; then thenBlock else elseBlock"></div>
-        <ng-template #thenBlock><i class="fas fa-chevron-up"></i></ng-template>
-        <ng-template #elseBlock><i class="fas fa-chevron-down"></i></ng-template> -->
+          Name 
+          <!-- shouldn't ever use Angular attributes on an element with Font Awesome classes -->
+          <!-- <i  [ngClass]="{'fa':nameDesc, 'fa-chevron-down': nameDesc }"></i>
+          <i  [ngClass]="{'fa':nameAsc, 'fa-chevron-up': nameAsc }"></i> -->
+        <span *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'asc'">
+          <i class="fas fa-chevron-up"></i>
+        </span>
+        <span *ngIf="getCurrentSort().sortBy == 'name' && getCurrentSort().sortOrder == 'desc'">
+          <i class="fas fa-chevron-down"></i>
+        </span>
         </button>
         <button
           type="button"
@@ -40,8 +41,12 @@
           (click)="timeOnClick()"
         >
           Upload Time
-          <i [ngClass]="{'fa':timeDesc, 'fa-chevron-down': timeDesc }"></i>
-          <i  [ngClass]="{'fa':timeAsc, 'fa-chevron-up': timeAsc }"></i>
+          <span *ngIf="getCurrentSort().sortBy == 'time' && getCurrentSort().sortOrder == 'asc'">
+            <i class="fas fa-chevron-up"></i>
+          </span>
+          <span *ngIf="getCurrentSort().sortBy == 'time' && getCurrentSort().sortOrder == 'desc'">
+            <i class="fas fa-chevron-down"></i>
+          </span>
         </button>
         <button
           type="button"
@@ -49,8 +54,12 @@
           (click)="sizeOnClick()"
         >
           Size
-          <i [ngClass]="{'fa':sizeDesc, 'fa-chevron-down': sizeDesc }"></i>
-          <i  [ngClass]="{'fa':sizeAsc, 'fa-chevron-up': sizeAsc }"></i>
+          <span *ngIf="getCurrentSort().sortBy == 'size' && getCurrentSort().sortOrder == 'asc'">
+            <i class="fas fa-chevron-up"></i>
+          </span>
+          <span *ngIf="getCurrentSort().sortBy == 'size' && getCurrentSort().sortOrder == 'desc'">
+            <i class="fas fa-chevron-down"></i>
+          </span>
         </button>
       </div>
     </div>
