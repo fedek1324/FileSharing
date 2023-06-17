@@ -4,6 +4,7 @@ import {Observable, of} from 'rxjs';
 import {User} from '../models/user';
 import {catchError, map, tap} from 'rxjs/operators';
 import { MyFile } from '../models/file';
+import { asyncDecoratorWithDelay } from '../services/delays';
 
 @Injectable()
 export class UserService{
@@ -14,6 +15,7 @@ export class UserService{
   public files: MyFile[] = [];
   public hasFiles = false;
   private filesChangeHandlers = [];
+
 
   public addOnFilesChangeHangler(func) {
     this.filesChangeHandlers.push(func)
@@ -47,7 +49,7 @@ export class UserService{
   //   )
   // }
 
-  deleteUser(user : User) : Observable<any> {
+  private deleteUser(user : User) : Observable<any> {
     console.log('deleting user', user);
     return this.http.delete(`${this.endpoint}/${user.id}`, this.httpOptions).pipe(
       tap(() => console.log(`finished deleting user`)),
@@ -55,13 +57,25 @@ export class UserService{
     )
   }
 
-  addUser(user:User) : Observable<any> {
+  deleteUserSafe(user : User) : Promise<any> {
+    let func = this.deleteUser.bind(this);
+    return asyncDecoratorWithDelay(func, arguments);
+  }
+  
+  private addUser(user:User) : Observable<any> {
     return this.http.post(this.endpoint, user, this.httpOptions).pipe(
       tap(() => console.log(`finished adding user`)),
       // catchError(this.handleError<any>('add user'))
       catchError(() => { throw new Error("add user ERROR");})
-    )
+      )
+    }
+
+  addUserSafe(user : User) : Promise<any> {
+    let func = this.addUser.bind(this);
+    return asyncDecoratorWithDelay(func, arguments);
   }
+    
+
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

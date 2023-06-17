@@ -82,37 +82,23 @@ export class FileUploadComponent implements OnInit {
       content: fileStr,
     };
 
-    let file = await this.fileUploadService.postFile(myFile).toPromise()
+    let file = await this.fileUploadService.postFileSafe(myFile);
 
     if (!file) {
       console.log('no data');
       this.showMessage('danger', 'Cannot upload file, server err');
     }
 
-
-    await new Promise( (res) => {
-      setTimeout(() => {
-        res(1);
-      }, 1000);
-    })
-    
     //add id of currently uploaded file to user inforamtion
     var user = this.authService.getAuthUser();
-    // user.id = 0; // DANGER WILL ADD NEW USER TO DB
     if (user.files == undefined) user.files = [];
     user.files.push(file.id);
 
-    let deleteRes = await this.userservice.deleteUser(user).toPromise();
+    let deleteRes = await this.userservice.deleteUserSafe(user);
     console.log(" this.userservice.deleteUser(user) res = ", deleteRes);
 
-    await new Promise( (res) => {
-      setTimeout(() => {
-        res(1);
-      }, 1000);
-    })
-
     try {
-      let addUserRes = await this.userservice.addUser(user).toPromise();
+      let addUserRes = await this.userservice.addUserSafe(user);
       console.log("addUser res", addUserRes);
 
       // as response we get user with correct id (not 0) and we have to login true user

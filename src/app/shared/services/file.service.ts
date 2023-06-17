@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MyFile } from '../models/file';
+import { asyncDecoratorWithDelay } from '../../shared/services/delays';
 
 @Injectable()
 export class FileService {
@@ -14,7 +15,7 @@ export class FileService {
 
   endpoint = 'http://localhost:3000/files/';
 
-  postFile(fileToUpload: MyFile): Observable<MyFile> {
+  private postFile(fileToUpload: MyFile): Observable<MyFile> {
     return this.httpClient
       .post(this.endpoint, fileToUpload, this.httpOptions)
       .pipe(
@@ -23,22 +24,10 @@ export class FileService {
       );
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      var errMsg : string = error.message;
-      console.log(`${operation} failed: ${error.message}`);
-      if (errMsg.includes("413 Payload Too Large"))
-        console.log('++++++');
-      //413 Payload Too Large
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
+  postFileSafe(fileToUpload: MyFile): Promise<MyFile> {
+    return asyncDecoratorWithDelay(this.postFile.bind(this), arguments);
   }
+
 
   searchFiles(term: string): Observable<MyFile[]> {
     console.log('fetching files...');
@@ -57,14 +46,23 @@ export class FileService {
       catchError(this.handleError<MyFile>('fetchFile by id'))
     );
   }
+  
+  // getFileSafe(id: number): Promise<MyFile>{
+  //   return asyncDecoratorWithDelay(this.getFile.bind(this), arguments);
+  // }
 
-  deleteFile(id : number) : Observable<void | object> {
+
+  private deleteFile(id : number) : Observable<void | object> {
     console.log('in delete function. deleting id:' + id);
     return this.httpClient.delete(`${this.endpoint}${id}`).pipe(
       tap(() => console.log('finished delete')),
       catchError(this.handleError<void>('deleteFileErr'))
       );
     }
+
+  deleteFileSafe(id: number): Promise<MyFile>{
+    return asyncDecoratorWithDelay(this.deleteFile.bind(this), arguments);
+  }
 
   downloadFile(file: MyFile) {
         console.log(file.content);
@@ -79,4 +77,23 @@ export class FileService {
   }
 
   b64toBlob = (base64) => fetch(base64).then((res) => res.blob());
+
+
+  
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
+
+      // TODO: better job of transforming error for user consumption
+      var errMsg : string = error.message;
+      console.log(`${operation} failed: ${error.message}`);
+      if (errMsg.includes("413 Payload Too Large"))
+        console.log('++++++');
+      //413 Payload Too Large
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 }

@@ -55,7 +55,7 @@ export class RegistrationComponent implements OnInit {
         return;
       }
       else {
-        this.userService.addUser(user).subscribe((res) => {
+        this.userService.addUserSafe(user).then(res => {
           console.log(res);
           // as response we get user with correct id (not 0) and we have to login true user
           this.authService.login(res);

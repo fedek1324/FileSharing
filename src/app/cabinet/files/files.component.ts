@@ -70,25 +70,14 @@ export class FilesComponent implements OnInit {
     var newUser = this.authService.getAuthUser();
     newUser.files = newUser.files.filter((fileId) => fileId != id);
 
-    this.userService.deleteUser(newUser).subscribe(async (res) => {
-      await new Promise( (res) => {
-        setTimeout(() => {
-          res(1);
-        }, 1000);
-      })
-      this.userService.addUser(newUser).subscribe(async (res) => {
+    this.userService.deleteUserSafe(newUser).then(res => {
+      this.userService.addUserSafe(newUser).then(res => {
         console.log(res);
         // as response we get user with correct id (not 0) and we have to login true user
         this.authService.login(res);
 
-        await new Promise( (res) => {
-          setTimeout(() => {
-            res(1);
-          }, 1000);
-        })
-
         console.log('deleting file id:' + id);
-        this.fileService.deleteFile(id).subscribe(() => {
+        this.fileService.deleteFileSafe(id).then(() => {
           this.userService.files = this.userService.files.filter(
             (file) => file.id != id
           );
