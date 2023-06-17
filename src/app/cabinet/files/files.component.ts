@@ -56,7 +56,7 @@ export class FilesComponent implements OnInit {
 
             // to do fix sort on each file
             let currSort = this.getCurrentSort();
-            console.log(currSort);
+            // console.log(currSort);
             this.sortFiles(currSort.sortBy, currSort.sortOrder)
             this.userService.outFiles$ = of(this.userService.files);
           }
@@ -66,15 +66,27 @@ export class FilesComponent implements OnInit {
 
   }
 
-  deleteFile(id: number) {
+  async deleteFile(id: number) {
     var newUser = this.authService.getAuthUser();
     newUser.files = newUser.files.filter((fileId) => fileId != id);
 
-    this.userService.deleteUser(newUser).subscribe((res) => {
-      this.userService.updateUser(newUser).subscribe((res) => {
+    this.userService.deleteUser(newUser).subscribe(async (res) => {
+      await new Promise( (res) => {
+        setTimeout(() => {
+          res(1);
+        }, 1000);
+      })
+      this.userService.addUser(newUser).subscribe(async (res) => {
         console.log(res);
         // as response we get user with correct id (not 0) and we have to login true user
         this.authService.login(res);
+
+        await new Promise( (res) => {
+          setTimeout(() => {
+            res(1);
+          }, 1000);
+        })
+
         console.log('deleting file id:' + id);
         this.fileService.deleteFile(id).subscribe(() => {
           this.userService.files = this.userService.files.filter(
@@ -162,14 +174,14 @@ export class FilesComponent implements OnInit {
         break;
     }
   
-    console.log(this.userService.files);
-    console.log("called SORT, now sort is", this.getCurrentSort());
-    console.log("variables ", this.nameAsc ,
-    this.nameDesc ,
-    this.timeAsc ,
-    this.timeDesc ,
-    this.sizeAsc ,
-    this.sizeDesc)
+    // console.log(this.userService.files);
+    // console.log("called SORT, now sort is", this.getCurrentSort());
+    // console.log("variables ", this.nameAsc ,
+    // this.nameDesc ,
+    // this.timeAsc ,
+    // this.timeDesc ,
+    // this.sizeAsc ,
+    // this.sizeDesc)
     this.userService.outFiles$ = of(this.userService.files); // if i remove it i get doubled files
   }
   

@@ -62,7 +62,7 @@ export class FileUploadComponent implements OnInit {
     return date;
   }
 
-  uploadFileToActivity() {
+  async uploadFileToActivity() {
     var currentDate = new Date();
     var date = ('0' + currentDate.getDate()).slice(-2) + '.' + ('0' + (currentDate.getMonth()+1)).slice(-2) + '.' + currentDate.getFullYear();
     var time = ('0' + currentDate.getHours()).slice(-2) + ':' + ('0' + currentDate.getMinutes()).slice(-2);
@@ -71,38 +71,60 @@ export class FileUploadComponent implements OnInit {
       this.showMessage('danger', 'File too large, sorry(');
       return;
     }
-    this.getBase64(this.fileToUpload).then((fileStr) => {
-      var myFile: MyFile = {
-        id: 0,
-        name: this.fileToUpload.name,
-        description: this.form.value.descr,
-        uploadDate: date,
-        uploadTime: time,
-        content: fileStr,
-      };
-      this.fileUploadService.postFile(myFile).subscribe((data) => {
-        if (!data) {
-          console.log('no data');
-          this.showMessage('danger', 'Cannot upload file, server did not respond');
-          return;
-        }
-        // add id of currently uploaded file to user inforamtion
-        var user = this.authService.getAuthUser();
-        if (user.files == undefined) user.files = [];
-        user.files.push(data.id);
-        this.userservice.deleteUser(user).subscribe((res) => {
-          this.userservice.updateUser(user).subscribe((res) => {
-            console.log(res);
-            // as response we get user with correct id (not 0) and we have to login true user
-            this.authService.login(res);
-            // location.reload();
-            this.userservice.files.push(myFile)
-            this.userservice.outFiles$ = of(this.userservice.files);
-            this.userservice.onFilesChange();
-          });
-        });
-      });
-    });
+    let fileStr = await this.getBase64(this.fileToUpload)
+    
+    var myFile: MyFile = {
+      id: 0,
+      name: this.fileToUpload.name,
+      description: this.form.value.descr,
+      uploadDate: date,
+      uploadTime: time,
+      content: fileStr,
+    };
+
+    let file = await this.fileUploadService.postFile(myFile).toPromise()
+
+    if (!file) {
+      console.log('no data');
+      this.showMessage('danger', 'Cannot upload file, server err');
+    }
+
+
+    await new Promise( (res) => {
+      setTimeout(() => {
+        res(1);
+      }, 1000);
+    })
+    
+    //add id of currently uploaded file to user inforamtion
+    var user = this.authService.getAuthUser();
+    // user.id = 0; // DANGER WILL ADD NEW USER TO DB
+    if (user.files == undefined) user.files = [];
+    user.files.push(file.id);
+
+    let deleteRes = await this.userservice.deleteUser(user).toPromise();
+    console.log(" this.userservice.deleteUser(user) res = ", deleteRes);
+
+    await new Promise( (res) => {
+      setTimeout(() => {
+        res(1);
+      }, 1000);
+    })
+
+    try {
+      let addUserRes = await this.userservice.addUser(user).toPromise();
+      console.log("addUser res", addUserRes);
+
+      // as response we get user with correct id (not 0) and we have to login true user
+      this.authService.login(addUserRes);
+
+      this.userservice.files.push(myFile)
+      this.userservice.outFiles$ = of(this.userservice.files);
+      this.userservice.onFilesChange();
+    } catch (e) {
+        console.log("ADD NEW USER ERR");
+        throw e;
+    }
     return;
   }
 

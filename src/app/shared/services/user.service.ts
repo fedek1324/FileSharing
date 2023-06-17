@@ -32,32 +32,34 @@ export class UserService{
       .pipe(map((user: User[]) => user[0] ? user[0] : undefined));
   }
 
-  httpOptions = {
+  httpOptions : Object = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    // responseType: "json"
   };
 
-  updateUser(user : User): Observable<User> {
-    console.log('updatin user');
-    console.log('new user:');
-    console.log(user);
-    return this.http.post(`${this.endpoint}`, user, this.httpOptions).pipe( // put doesnt work right
-      tap(() => console.log(`finished updating user`)),
-      catchError(this.handleError<any>('updated user'))
-    )
-  }
+  // updateUser(user : User): Observable<User> {
+  //   console.log('updatin user');
+  //   console.log('new user:');
+  //   console.log(user);
+  //   return this.http.post(`${this.endpoint}`, user, this.httpOptions).pipe( // put doesnt work right
+  //     tap(() => console.log(`finished updating user`)),
+  //     catchError(this.handleError<any>('updated user'))
+  //   )
+  // }
 
-  deleteUser(user : User) : Observable<User> {
-    console.log('deleting user');
+  deleteUser(user : User) : Observable<any> {
+    console.log('deleting user', user);
     return this.http.delete(`${this.endpoint}/${user.id}`, this.httpOptions).pipe(
       tap(() => console.log(`finished deleting user`)),
       catchError(this.handleError<any>('deleted user'))
     )
   }
 
-  addUser(user:User) : Observable<User> {
+  addUser(user:User) : Observable<any> {
     return this.http.post(this.endpoint, user, this.httpOptions).pipe(
       tap(() => console.log(`finished adding user`)),
-      catchError(this.handleError<any>('add user'))
+      // catchError(this.handleError<any>('add user'))
+      catchError(() => { throw new Error("add user ERROR");})
     )
   }
 
