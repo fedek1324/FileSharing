@@ -19,3 +19,5 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
   <li>in terminal 1: json-server --watch db.json</li>
   <li>in terminal 2: ng serve --open</li>
 </ol>
+
+Use Node v 12.x
