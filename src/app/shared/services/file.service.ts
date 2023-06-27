@@ -7,7 +7,9 @@ import { asyncDecoratorWithDelay } from '../../shared/services/delays';
 
 @Injectable()
 export class FileService {
-  constructor(private httpClient: HttpClient) {}
+  
+  constructor(private httpClient: HttpClient) {
+  }
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),

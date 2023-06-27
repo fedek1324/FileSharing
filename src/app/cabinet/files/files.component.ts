@@ -85,7 +85,7 @@ export class FilesComponent implements OnInit {
           this.userService.onFilesChange();
         });
       });
-    });
+    })
   }
 
   download(file: MyFile): void {

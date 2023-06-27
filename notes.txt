@@ -1,4 +1,3 @@
-fix err when we delete file and it tries to delete file with id 0
 add seconds to upload time or use timestamp
 i get file from another cabinet wher relogin
 sometimes files duplicate
