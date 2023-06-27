@@ -11,13 +11,8 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 <ol>
   <h3>setup:</h3>
-  <li>Clone repository</li>
-  <li>npm i</li>
-  <li>npm i -g @angular/cli</li>
-  <li>npm i json-server</li>
+  <li>Clone repository (no need to run npm i or something)</li>
   <h3>run:</h3>
-  <li>in terminal 1: json-server --watch db.json</li>
-  <li>in terminal 2: ng serve --open</li>
+  <li>in terminal: json-server --watch db.json</li>
+  <li>visit: <a href="http://file-sharing-sable.vercel.app/">Vercel hosting</a></li>
 </ol>
-
-Use Node v 12.x
