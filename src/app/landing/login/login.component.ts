@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
     })
     .catch( err => {
       this.message = {
-        text: 'Server error',
+        text: 'DB Server error',
         type: 'danger',
       };
       console.log("getting error on login see below")
