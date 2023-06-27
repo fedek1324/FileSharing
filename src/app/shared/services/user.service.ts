@@ -31,7 +31,11 @@ export class UserService{
 
   getUser(email: string): Observable<User> {
     return this.http.get(`${this.endpoint}?email=${email}`)
-      .pipe(catchError(this.handleError<any>('GET user')));
+      .pipe(
+        catchError(this.handleError<any>('GET user')),
+        // map changes result so it returns undefined instead of
+        // [] if no user
+        map((user: User[]) => user[0] ? user[0] : undefined));
   }
 
   httpOptions : Object = {
