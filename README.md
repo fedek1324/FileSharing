@@ -9,7 +9,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 ## How to run
 
-<ol>
+<ol>  
   <h3>Setup:</h3>
   <li>Clone repository (no need to run npm i or something): <code>git clone https://github.com/fedek1324/FileSharing</code></li>
   <li>Open project folder: <code>cd FileSharing/</code></li>
