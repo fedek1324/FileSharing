@@ -35,7 +35,8 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     const formData = this.form.value;
 
-    this.userService.getUser(formData.email).subscribe((user: User) => {
+    this.userService.getUser(formData.email).toPromise()
+    .then((user: User) => {
       if (user) {
         if (user.password === formData.password) {
           this.authService.login(user);
@@ -56,6 +57,9 @@ export class LoginComponent implements OnInit {
           type: 'danger',
         };
       }
-    });
+    })
+    .catch(err => {
+      console.log("Cached ERR" + err);
+    }) 
   }
 }
