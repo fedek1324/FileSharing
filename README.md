@@ -10,9 +10,9 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 ## How to run
 
 <ol>
-  <h3>setup:</h3>
+  <h3>Setup:</h3>
   <li>Clone repository (no need to run npm i or something)</li>
-  <h3>run:</h3>
-  <li>in terminal: json-server --watch db.json</li>
-  <li>visit: <a href="http://file-sharing-sable.vercel.app/">File sharing on Vercel hosting</a></li>
+  <h3>Run:</h3>
+  <li>In terminal: <code>json-server --watch db.json</code></li>
+  <li>Visit: <a href="http://file-sharing-sable.vercel.app/">File sharing on Vercel hosting</a></li>
 </ol>
