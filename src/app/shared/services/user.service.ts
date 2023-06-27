@@ -31,7 +31,7 @@ export class UserService{
 
   getUser(email: string): Observable<User> {
     return this.http.get(`${this.endpoint}?email=${email}`)
-      .pipe(map((user: User[]) => user[0] ? user[0] : undefined));
+      .pipe(catchError(this.handleError<any>('GET user')));
   }
 
   httpOptions : Object = {
@@ -66,7 +66,7 @@ export class UserService{
     return this.http.post(this.endpoint, user, this.httpOptions).pipe(
       tap(() => console.log(`finished adding user`)),
       // catchError(this.handleError<any>('add user'))
-      catchError(() => { throw new Error("add user ERROR");})
+      catchError(this.handleError<any>('addUser err'))
       )
     }
 
@@ -80,11 +80,12 @@ export class UserService{
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      // console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       console.log(`${operation} failed: ${error.message}`);
 
+      throw error;
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
