@@ -49,7 +49,8 @@ export class RegistrationComponent implements OnInit {
 
     // if (this.userService.getUser("ewfe@yt"))
     var isExists = false;
-    this.userService.getUser(formData.email).subscribe((data) => {
+    this.userService.getUser(formData.email).toPromise()
+    .then ((data) => {
       if(data) {
         this.message = {type: 'danger', 'text' : 'This user is already exists'};
         return;
@@ -63,6 +64,14 @@ export class RegistrationComponent implements OnInit {
           setTimeout(() => this.router.navigate(['./cabinet'], {}), 800);
         });
       }
-    });
+    })
+    .catch( err => {
+      this.message = {
+        text: 'Server error',
+        type: 'danger',
+      };
+      console.log("getting error on registation see below")
+      console.log(err);
+    })
   }
 }
