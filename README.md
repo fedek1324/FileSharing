@@ -17,5 +17,4 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
   <h3>Run:</h3>
   <li>Run DB server: <code>json-server --watch db.json</code></li>
   <li>Visit: <a href="https://file-sharing-sable.vercel.app/" target="_blank">File sharing on Vercel hosting</a></li>
-  <li>[File sharing on Vercel hosting](https://file-sharing-sable.vercel.app/)</li>
 </ol>
