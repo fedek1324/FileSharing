@@ -8,12 +8,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## How to run
+
 <ol>
   <h3>Setup:</h3>
-  <li><p>Clone repository (no need to run npm i or something):</p> <code>git clone https://github.com/fedek1324/FileSharing</code></li>
-  <li><p>Open project folder:</p> <code>cd FileSharing/</code></li>
-  <li><p>Install json-server globally:</p> <code>npm i -g json-server</code></li>
+  <li>Clone repository (no need to run npm i or something): <code>git clone https://github.com/fedek1324/FileSharing</code></li>
+  <li>Open project folder: <code>cd FileSharing/</code></li>
+  <li>Install json-server globally: <code>npm i -g json-server</code></li>
   <h3>Run:</h3>
-  <li><p>Run DB server:</p> <code>json-server --watch db.json</code></li>
-  <li><p>Visit:</p> <a href="http://file-sharing-sable.vercel.app/" target="_blank">File sharing on Vercel hosting</a></li>
+  <li>Run DB server: <code>json-server --watch db.json</code></li>
+  <li>Visit: <a href="https://file-sharing-sable.vercel.app/" target="_blank">File sharing on Vercel hosting</a></li>
+  <li>[File sharing on Vercel hosting](https://file-sharing-sable.vercel.app/)</li>
 </ol>
